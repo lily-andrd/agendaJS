@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda</title>
+</head>
+<body>
+    <input id="tarefa" type="text" placeholder="Insira aqui sua tarefa"></input>
+    <input id="seleciona-data" type="date"/>
+    <button onclick="adicionarTarefa()">adicionar tarefas</button>
+    <div id="lista-de-tarefas"></div>
+    <script>
+
+        //Seção de modelagem
+        let afazeres;
+        const afazeresSalvos = JSON.parse(localStorage.getItem("afazeres"));
+        if(Array.isArray(afazeresSalvos)){
+            afazeres = JSON.parse(localStorage.getItem("afazeres"));
+        }else{
+            afazeres = [
+            {
+                nome: "Lavar louça",
+                data: "2025-08-15",
+                id: "id1"
+            },
+            {
+                nome: "Lavar o banheiro",
+                data: "2025-08-20",
+                id: "id2"
+            },
+            {
+                nome: "Estender a roupa",
+                data: "2025-08-20",
+                id: "id3"
+            },
+            {
+                nome: "Assistir o jogo do Palmeiras",
+                data: "2025-08-20",
+                id: "id4"
+            }
+        ];
+        }
+      
+        
+
+        const salvarTarefas = () => localStorage.setItem("afazeres", JSON.stringify(afazeres));
+        //console.log(JSON.stringify(afazeres));
+        salvarTarefas();
+
+         let adicionarTarefa = () => {
+            const campoTarefa = document.getElementById("tarefa");
+            const tarefa = campoTarefa.value;
+
+            const campoData = document.getElementById("seleciona-data")
+            const prazo = campoData.value;
+
+            const cron = "" + new Date().getTime();
+
+            afazeres.push(
+                {
+                    nome: tarefa,
+                    data: prazo,
+                    id: cron
+                }
+            )
+            salvarTarefas();
+            renderizar();
+        }
+        
+        let apagarTarefa = (evento) => {
+            const botaoApagar = evento.target;
+            const idASerApagado =  botaoApagar.id;
+            afazeres = afazeres.filter((tarefa)=>{
+                if( tarefa.id === idASerApagado ){
+                    return false;
+                }else{
+                    return true;
+                }
+            });
+            salvarTarefas();
+            renderizar();
+        };
+
+
+        let renderizar = () =>{
+            document.getElementById("lista-de-tarefas").innerHTML = "";
+            afazeres.forEach(
+            (tarefa) => {
+                const elemento = document.createElement("div");
+                elemento.innerHTML = tarefa.nome + " " + tarefa.data;
+
+                const botaoApagar = document.createElement("button");
+                botaoApagar.innerText = "❌";
+                botaoApagar.style = "margin-left: 12px;"
+                botaoApagar.id = tarefa.id;
+                botaoApagar.onclick = apagarTarefa;
+                elemento.appendChild( botaoApagar );
+                
+
+                const listaDeTarefas = document.getElementById("lista-de-tarefas");
+                listaDeTarefas.appendChild (elemento);
+                
+            
+            }
+        ); 
+        }
+        renderizar();
+
+        
+    </script>
+    
+</body>
+</html>
